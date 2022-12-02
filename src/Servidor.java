@@ -123,7 +123,7 @@ public class Servidor implements Runnable {
 						else
 							escritor.println("No existe una conexion con Porteria");
 						
-						System.out.println(ac.getNombre());
+
 					}
 					else if(mensaje.startsWith("Porteria")) {
 						String[] msg = mensaje.split(":");
