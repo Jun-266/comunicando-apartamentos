@@ -7,19 +7,31 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+/**
+ * <h1>Servidor</h1> La clase servidor abre la conexion para los clientes y las administra
+ * <p>
+ * <b>Note:</b> Clase externa
+ *
+ * @author JOS
+ * @version 1.0
+ */
 public class Servidor implements Runnable {
 
 	private ArrayList<AdministradorConexiones> conexiones;
 	private ServerSocket servidor;
 	private boolean terminado;
 	private ExecutorService piscina;
-
+	
+	/**
+	 * Constructor para la clase Servidor
+	 */
 	public Servidor() {
 		this.conexiones = new ArrayList<>();
 		this.terminado = false;
 	}
-
+	/**
+	 * Abre el servidor para que pueda seguir recibiendo conexiones
+	 */
 	@Override
 	public void run() {
 		try {
@@ -35,7 +47,10 @@ public class Servidor implements Runnable {
 			apagar();
 		}
 	}
-
+	/**
+	 * Manda un mensaje a todas las conexiones del momento
+	 * @param mensaje Mensaje a enviar
+	 */
 	public void transmitir(String mensaje) {
 		for (AdministradorConexiones ac : conexiones) {
 			if (ac != null | ac.getNombre().equalsIgnoreCase("porteria")) {
@@ -43,7 +58,10 @@ public class Servidor implements Runnable {
 			}
 		}
 	}
-
+	/**
+	 * Este metodo cierra las conexiones entre los clientes y el servidor apagando o cerrando el socket
+	 * en el que esta
+	 */
 	public void apagar() {
 		terminado = true;
 		piscina.shutdown();
@@ -59,26 +77,43 @@ public class Servidor implements Runnable {
 			
 		}
 	}
-
+	/**
+	 * <h1>AdministradorConexiones</h1> La clase se encarga de enviar los mensajes entre
+	 * el servidor y los clientes 
+	 * <p>
+	 * <b>Note:</b> Clase interna
+	 */
 	class AdministradorConexiones implements Runnable {
 
 		private Socket cliente;
 		private BufferedReader lector;
 		private PrintWriter escritor;
 		private String nombre;
-
+		/**
+		 * Constructor para la clase AdministradorConexiones
+		 */
 		public AdministradorConexiones(Socket cliente) {
 			this.cliente = cliente;
 		}
-
+		/**
+		 * Este metodo envia un mensaje
+		 * @param mensaje El mensaje a enviar
+		 */
 		public void enviarMensaje(String mensaje) {
 			escritor.println(mensaje);
 		}
-		
+		/**
+		 * Este metodo retorna el nombre de la conexion administrada
+		 * @return nombre Nombre de la conexion
+		 */
 		public String getNombre() {
 			return nombre;
 		}
 
+		/**
+		 * Cierra la conexion con el cliente y cierra los lectores y escritores
+		 * de datos 
+		 */
 		public void apagar() {
 			try {
 				if (cliente != null) 
@@ -93,7 +128,10 @@ public class Servidor implements Runnable {
 				
 			}
 		}
-
+		/**
+		 * Ejecuta todas las conexiones de los clientes conectectados en el momento y llama los metodos 
+		 * correspondientes a cada operacion
+		 */
 		@Override
 		public void run() {
 			try {
@@ -152,7 +190,11 @@ public class Servidor implements Runnable {
 				apagar();
 			}
 		}
-		
+		/**
+		 * Busca una conexion en la lista de clientes
+		 * @param nom Nombre de la conexion
+		 * @return AdministradorConexiones Conexion buscada
+		 */
 		public AdministradorConexiones buscarConexion(String nom) {
 			for (AdministradorConexiones ac : conexiones) {
 				if(ac.getNombre().equalsIgnoreCase(nom)) {
@@ -163,7 +205,11 @@ public class Servidor implements Runnable {
 			return null;
 		}
 	}
-	
+	/**
+	 * Este metodo main crea un objeto Servidor y ejecuta su metodo run
+	 * 
+	 * @param args Unused.
+	 */
 	public static void main(String[] args) {
 		Servidor servidor = new Servidor();
 		servidor.run();

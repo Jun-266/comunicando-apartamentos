@@ -7,5 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="javamail-1.4.7/mail.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/computacion/git/comunicando-apartamentos/javamail-1.4.7/mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

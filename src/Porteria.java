@@ -6,17 +6,31 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
+/**
+ * <h1>Porteria</h1> La aplicacion de la porteria gestiona las entradas y salidas
+ * por consola del la interfaz de usuario de la porteria
+ * <p>
+ * <b>Note:</b> La aplicacion fuciona por consola
+ *
+ * @author JOS
+ * @version 1.0
+ */
 public class Porteria implements Runnable{
 	
 	private Socket cliente;
 	private BufferedReader lector;
 	private PrintWriter escritor;
 	private boolean terminado;
-	
+	/**
+	 * Constructor para la clase Porteria
+	 */
 	public Porteria() {
 		this.terminado = false;
 	}
-	
+	/**
+	 * Este metodo cierra la conexion entre el cliente y el servidor y se ejecuta si
+	 * se digita el comando quit
+	 */
 	public void apagar() {
 		terminado = true;
 		try {
@@ -33,6 +47,10 @@ public class Porteria implements Runnable{
 		}
 	}
 
+	/**
+	 * Este metodo muestra la interfaz de usuario y lee por consola los comandos de
+	 * la aplicacion de la porteria
+	 */
 	@Override
 	public void run() {
 		try {
@@ -58,6 +76,10 @@ public class Porteria implements Runnable{
 	
 	class AdministradorEntradaDatos implements Runnable {
 
+		/**
+		 * Este metodo lee las determinadas opciones por la linea de comandos y llama a
+		 * los metodos correspondientes
+		 */
 		@Override
 		public void run() {
 			try {
@@ -73,6 +95,11 @@ public class Porteria implements Runnable{
 		}
 	}
 	
+	/**
+	 * Este metodo main crea un objeto porteria y ejecuta su metodo run
+	 * 
+	 * @param args Unused.
+	 */
 	public static void main(String[] args) {
 		Porteria p = new Porteria();
 		p.run();
