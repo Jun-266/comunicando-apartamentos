@@ -36,6 +36,8 @@ public class Porteria implements Runnable{
 	@Override
 	public void run() {
 		try {
+			System.out.println("Recuerda,si quiere solitar un acceso hagalo por este comando (Porteria:nombre del apartamento:nombre de la persona)"
+						+ " a ingresar" );
 			InetAddress ia = InetAddress.getLocalHost();
 			cliente = new Socket(ia.getHostAddress(), 9999);
 			escritor = new PrintWriter(cliente.getOutputStream(), true);
@@ -60,11 +62,10 @@ public class Porteria implements Runnable{
 		public void run() {
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-				System.out.println("Recuerda,si quiere solitar un acceso hagalo por este comando ('nombre del apartamento':nombre de la persona"
-						+ " a ingresar" );
+				
 				while (!terminado) {
 					String mensaje = in.readLine();
-					escritor.println("Porteria:"+mensaje);
+					escritor.println(mensaje);
 				}
 			} catch(IOException e) {
 				apagar();
@@ -73,8 +74,8 @@ public class Porteria implements Runnable{
 	}
 	
 	public static void main(String[] args) {
-		Cliente c = new Cliente();
-		c.run();
+		Porteria p = new Porteria();
+		p.run();
 	}
 
 }

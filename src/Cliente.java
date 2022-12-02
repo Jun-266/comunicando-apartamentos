@@ -52,6 +52,18 @@ public class Cliente implements Runnable{
 	@Override
 	public void run() {
 		try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("Recuerda:\n1)Comunicarte con un apartamento\n2)Boton de emergencia\nSi quieres transmitir a todos los apartamentos"
+					+" solo escribe");
+			System.out.println("Digite un correo como contacto de emergencia");
+			contacto=in.readLine();
+			System.out.println("Digite su nombre");
+			name = in.readLine();
+			System.out.println("Digite su correo de gmail");
+			email = in.readLine();
+			System.out.println("Digite contraseña");
+			pass=in.readLine();
+			
 			InetAddress ia = InetAddress.getLocalHost();
 			cliente = new Socket(ia.getHostAddress(), 9999);
 			escritor = new PrintWriter(cliente.getOutputStream(), true);
@@ -76,17 +88,6 @@ public class Cliente implements Runnable{
 		public void run() {
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-				System.out.println("Recuerda:\n1)Comunicarte con un apartamento\n2)Boton de emergencia\nSi quieres transmitir a todos los apartamentos"
-						+" solo escribe");
-				System.out.println("Digite un correo como contacto de emergencia");
-				contacto=in.readLine();
-				System.out.println("Digite su nombre");
-				name = in.readLine();
-				System.out.println("Digite su correo de gmail");
-				email = in.readLine();
-				System.out.println("Digite contraseña");
-				pass=in.readLine();
-				
 				while (!terminado) {
 					String mensaje = in.readLine();
 					if (mensaje.equals("/quit")) {
@@ -108,34 +109,33 @@ public class Cliente implements Runnable{
 		}
 		
 		public void enviarCorreo() {
-			Properties propiedad = new Properties();
-	        propiedad.setProperty("mail.smtp.host", "smtp.gmail.com");
-	        propiedad.setProperty("mail.smtp.starttls.enable", "true");
-	        propiedad.setProperty("mail.smtp.port", "587");
-	        propiedad.setProperty("mail.smtp.auth", "true");
+			Properties properties = new Properties();
+			properties.put("mail.smtp.host", "smtp.office365.com");
+			properties.put("mail.smtp.starttls.enable", "true");
+			properties.put("mail.smtp.port",587);
+			properties.put("mail.smtp.mail.sender",email);
+			properties.put("mail.smtp.user", email);
+			properties.put("mail.smtp.auth", "true");
 	        
 
-	        Session sesion = Session.getDefaultInstance(propiedad);
+	        Session sesion = Session.getDefaultInstance(properties);
 	        String asunto = "Emergencia apartamento";
 	        String mensaje="El residente "+name+" se encuentra en un estado emergencia."
 	        		+ "Por favor contactarse con la persona lo antes posible";
 	        
-	        MimeMessage correo = new MimeMessage(sesion);
-	        
-            try {
-            	correo.setFrom(new InternetAddress (email));
-                correo.addRecipient(Message.RecipientType.TO, new InternetAddress (contacto));
-                correo.setSubject(asunto);
-                correo.setText(mensaje);
-                
-                Transport transportar = sesion.getTransport("smtp");
-                transportar.connect(email,pass);
-                transportar.close();
-				transportar.sendMessage(correo, correo.getRecipients(Message.RecipientType.TO));
-			} catch ( AddressException e) {
-				e.printStackTrace();
-			}catch( MessagingException e) {
-				e.printStackTrace();
+	        try{
+				MimeMessage message = new MimeMessage(sesion);
+				message.setFrom(new InternetAddress(email));
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(contacto));
+				message.setSubject(asunto);
+				message.setText(mensaje);
+				Transport t = sesion.getTransport("smtp");
+				t.connect(email, pass);
+				t.sendMessage(message, message.getAllRecipients());
+				t.close();
+				
+			}catch (MessagingException me) {
+				me.printStackTrace();
 			}
 		}
 	}

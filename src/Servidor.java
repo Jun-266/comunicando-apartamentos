@@ -106,7 +106,7 @@ public class Servidor implements Runnable {
 				String mensaje;
 
 				while ((mensaje = lector.readLine()) != null) {
-					if (mensaje.startsWith("1")) {
+					if (mensaje.equals("1")) {
 						escritor.println("Digite el nombre del apartamento que quiere enviar");
 						String msg=lector.readLine();
 						AdministradorConexiones temp=buscarConexion(msg);
@@ -116,9 +116,14 @@ public class Servidor implements Runnable {
 						else
 							escritor.println("No existe un apartamento con este nombre");
 					} 
-					else if (mensaje.startsWith("2")){
+					else if (mensaje.equals("2")){
 						AdministradorConexiones ac=buscarConexion("Porteria");
-						ac.enviarMensaje("Hay una emergencia en el apartamento: "+nombre);
+						if(ac!=null)
+							ac.enviarMensaje("Hay una emergencia en el apartamento: "+nombre);
+						else
+							escritor.println("No existe una conexion con Porteria");
+						
+						System.out.println(ac.getNombre());
 					}
 					else if(mensaje.startsWith("Porteria")) {
 						String[] msg = mensaje.split(":");
