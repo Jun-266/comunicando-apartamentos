@@ -75,6 +75,10 @@ public class Servidor implements Runnable {
 			escritor.println(mensaje);
 		}
 		
+		public String getNombre() {
+			return nombre;
+		}
+
 		public void apagar() {
 			try {
 				if (cliente != null) 
@@ -102,17 +106,37 @@ public class Servidor implements Runnable {
 				String mensaje;
 
 				while ((mensaje = lector.readLine()) != null) {
-					if (mensaje.startsWith("/nick ")) {
-						String[] mensajeDividido = mensaje.split(" ", 2);
-						if (mensajeDividido.length == 2) {
-							transmitir(nombre + " renombrado a " + mensajeDividido[1]);
-							System.out.println(nombre + " renombrado a " + mensajeDividido[1]);
-							nombre = mensajeDividido[1];
-							escritor.println("Nombre modificado con exito a: " + nombre);
-						} else {
-							escritor.println("No se registro ningun nombre.");
+					if (mensaje.startsWith("1")) {
+						escritor.println("Digite el nombre del apartamento que quiere enviar");
+						String msg=lector.readLine();
+						AdministradorConexiones temp=buscarConexion(msg);
+						
+						if(temp!=null) 
+							temp.enviarMensaje(nombre+": "+msg);
+						else
+							escritor.println("No existe un apartamento con este nombre");
+					} 
+					else if (mensaje.startsWith("2")){
+						AdministradorConexiones ac=buscarConexion("Porteria");
+						ac.enviarMensaje("Hay una emergencia en el apartamento: "+nombre);
+					}
+					else if(mensaje.startsWith("Porteria")) {
+						String[] msg = mensaje.split(":");
+						AdministradorConexiones ac=buscarConexion(msg[1]);
+						if(ac!=null) {
+							ac.enviarMensaje("Porteria: "+"¿Desea dejar ingresar a "+msg[2]+" Si/No");
+							String mens=ac.lector.readLine();
+							while(!mens.equalsIgnoreCase("Si") && !mens.equalsIgnoreCase("No")) {
+								ac.enviarMensaje("Esta respuesta no está entre las opciones");
+								ac.enviarMensaje("Porteria: "+"¿Desea dejar ingresar a "+msg[2]+" Si/No");
+								mens=ac.lector.readLine();
+							}
+							escritor.println(mens);
 						}
-					} else if (mensaje.startsWith("/quit")) {
+						else
+							escritor.println("No existe un apartamento con este nombre");
+					}
+					else if (mensaje.startsWith("/quit")) {
 						transmitir(nombre + " dejo el chat.");
 						apagar();
 					} else {
@@ -122,6 +146,16 @@ public class Servidor implements Runnable {
 			} catch (IOException e) {
 				apagar();
 			}
+		}
+		
+		public AdministradorConexiones buscarConexion(String nom) {
+			for (AdministradorConexiones ac : conexiones) {
+				if(ac.getNombre().equalsIgnoreCase(nom)) {
+					return ac;
+				}
+			}
+			
+			return null;
 		}
 	}
 	

@@ -11,9 +11,11 @@ public class Cliente implements Runnable{
 	private BufferedReader lector;
 	private PrintWriter escritor;
 	private boolean terminado;
+	private String contacto;
 	
 	public Cliente() {
 		this.terminado = false;
+		contacto="";
 	}
 	
 	public void apagar() {
@@ -59,14 +61,21 @@ public class Cliente implements Runnable{
 		public void run() {
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-				
+				System.out.println("Recuerda:\n1)Comunicarte con un apartamento\n2)Boton de emergencia\nSi quieres transmitir a todos los apartamentos"
+						+" solo escribe");
+				System.out.println("Digite un correo como contacto de emergencia");
+				contacto=in.readLine();
 				while (!terminado) {
 					String mensaje = in.readLine();
 					if (mensaje.equals("/quit")) {
 						escritor.println(mensaje);
 						in.close();
 						apagar();
-					} else {
+					}
+					else if(mensaje.equals("2")) {
+						
+					}
+					else {
 						escritor.println(mensaje);
 					}
 				}
