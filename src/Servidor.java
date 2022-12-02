@@ -38,7 +38,7 @@ public class Servidor implements Runnable {
 
 	public void transmitir(String mensaje) {
 		for (AdministradorConexiones ac : conexiones) {
-			if (ac != null) {
+			if (ac != null | ac.getNombre().equalsIgnoreCase("porteria")) {
 				ac.enviarMensaje(mensaje);
 			}
 		}
